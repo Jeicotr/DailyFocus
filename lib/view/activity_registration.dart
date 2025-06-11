@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../database/database_provider.dart';
+import '../database/models/activity.dart';
 
 class ActivityRegistration extends StatefulWidget {
   const ActivityRegistration({super.key});
@@ -10,11 +12,39 @@ class ActivityRegistration extends StatefulWidget {
 
 class _ActivityRegistrationState extends State<ActivityRegistration> {
   final TextEditingController taskNameController = TextEditingController();
+  final DatabaseProvider _databaseProvider = DatabaseProvider();
   String taskStatus = '';
-  List<Map<String, dynamic>> tasks = [];
+  List<Activity> tasks = [];
   String error = '';
+  bool isLoading = false;
 
-  void handleSubmit() {
+  @override
+  void initState() {
+    super.initState();
+    _loadActivities();
+  }
+
+  Future<void> _loadActivities() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final activities = await _databaseProvider.getAllActivities();
+      setState(() {
+        tasks = activities;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error al cargar actividades: $e');
+      setState(() {
+        error = 'Error al cargar actividades';
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> handleSubmit() async {
     if (taskNameController.text.trim().isEmpty) {
       setState(() {
         error = 'El nombre de la tarea es requerido';
@@ -29,24 +59,51 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
       return;
     }
 
-    final now = DateTime.now();
-    final dateFormatter = DateFormat('dd/MM/yyyy');
-    final timeFormatter = DateFormat('HH:mm');
-
-    final newTask = {
-      'id': now.millisecondsSinceEpoch,
-      'name': taskNameController.text,
-      'date': dateFormatter.format(now),
-      'time': timeFormatter.format(now),
-      'status': taskStatus,
-    };
-
     setState(() {
-      tasks.add(newTask);
-      taskNameController.clear();
-      taskStatus = '';
-      error = '';
+      isLoading = true;
     });
+
+    try {
+      final now = DateTime.now();
+      final dateFormatter = DateFormat('dd/MM/yyyy');
+      final timeFormatter = DateFormat('HH:mm');
+
+      final newActivity = Activity(
+        name: taskNameController.text,
+        date: dateFormatter.format(now),
+        time: timeFormatter.format(now),
+        status: taskStatus,
+        createdAt: now,
+      );
+
+      final id = await _databaseProvider.insertActivity(newActivity);
+      
+      if (id > 0) {
+        // Éxito: se insertó la actividad
+        final insertedActivity = newActivity.copyWith(id: id);
+        
+        setState(() {
+          tasks.add(insertedActivity);
+          taskNameController.clear();
+          taskStatus = '';
+          error = '';
+        });
+      } else {
+        // Error al insertar
+        setState(() {
+          error = 'Error al guardar la actividad';
+        });
+      }
+    } catch (e) {
+      print('Error al insertar actividad: $e');
+      setState(() {
+        error = 'Error: ${e.toString()}';
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -284,7 +341,7 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
-                                onPressed: handleSubmit,
+                                onPressed: isLoading ? null : handleSubmit,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.indigo[600],
                                   foregroundColor: Colors.white,
@@ -293,9 +350,18 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
-                                icon: const Icon(Icons.add, size: 18),
-                                label: const Text(
-                                  "Agregar tarea",
+                                icon: isLoading 
+                                    ? SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Icon(Icons.add, size: 18),
+                                label: Text(
+                                  isLoading ? "Guardando..." : "Agregar tarea",
                                   style: TextStyle(fontSize: 16),
                                 ),
                               ),
@@ -307,7 +373,11 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                     const SizedBox(height: 24),
 
                     // Lista de tareas registradas
-                    if (tasks.isNotEmpty)
+                    if (isLoading && tasks.isEmpty)
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    else if (tasks.isNotEmpty)
                       Card(
                         elevation: 8,
                         shape: RoundedRectangleBorder(
@@ -346,7 +416,7 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                task['name'],
+                                                task.name,
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 16,
@@ -359,20 +429,20 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                                 vertical: 4,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: task['status'] == 'Done'
+                                                color: task.status == 'Done'
                                                     ? Colors.green[100]
-                                                    : task['status'] == 'In Progress'
+                                                    : task.status == 'In Progress'
                                                         ? Colors.blue[100]
                                                         : Colors.grey[100],
                                                 borderRadius: BorderRadius.circular(16),
                                               ),
                                               child: Text(
-                                                task['status'],
+                                                task.status,
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  color: task['status'] == 'Done'
+                                                  color: task.status == 'Done'
                                                       ? Colors.green[800]
-                                                      : task['status'] == 'In Progress'
+                                                      : task.status == 'In Progress'
                                                           ? Colors.blue[800]
                                                           : Colors.grey[800],
                                                 ),
@@ -385,14 +455,14 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              task['date'],
+                                              task.date,
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey[500],
                                               ),
                                             ),
                                             Text(
-                                              task['time'],
+                                              task.time,
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey[500],
