@@ -84,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           });
         } else {
           final user = User(name: name, email: email, password: password);
-          final result = await _databaseHelper.insertUser(user);
+          final result = await _databaseHelper.insertUser(user.toMap());
 
           if (result > 0) {
             setState(() {
