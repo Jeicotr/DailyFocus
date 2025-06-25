@@ -112,7 +112,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       backgroundColor: Colors.indigo[50],
       appBar: AppBar(
-        title: const Text("Registro"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text("Registro", style: TextStyle(color: Colors.indigo[800])),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.indigo[800]),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -203,8 +209,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       autofillHints: const [AutofillHints.password],
                       validator: (value) {
                         final password = value?.trim() ?? '';
-                        if (password.isEmpty)
+                        if (password.isEmpty) {
                           return 'La contraseña es requerida';
+                        }
                         if (password.length < 6) return 'Mínimo 6 caracteres';
                         return null;
                       },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
+import 'menu.dart';
 
 class LoginDailyFocus extends StatefulWidget {
   const LoginDailyFocus({super.key});
@@ -9,35 +10,29 @@ class LoginDailyFocus extends StatefulWidget {
 }
 
 class _LoginDailyFocusState extends State<LoginDailyFocus> {
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final DatabaseHelper _databaseHelper = DatabaseHelper();
   bool showPassword = false;
   bool isLoading = false;
-  String emailError = '';
+  String userError = '';
   String passwordError = '';
   String loginError = '';
   bool loginSuccess = false;
 
   void validateForm() {
     setState(() {
-      emailError = '';
+      userError = '';
       passwordError = '';
       loginError = '';
       loginSuccess = false;
 
-      if (emailController.text.isEmpty) {
-        emailError = 'El email es requerido';
-      } else if (!RegExp(
-        r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
-      ).hasMatch(emailController.text)) {
-        emailError = 'Por favor ingresa un email válido';
+      if (userController.text.isEmpty) {
+        userError = 'El usuario es requerido';
       }
 
       if (passwordController.text.isEmpty) {
         passwordError = 'La contraseña es requerida';
-      } else if (passwordController.text.length < 6) {
-        passwordError = 'La contraseña debe tener al menos 6 caracteres';
       }
     });
   }
@@ -45,26 +40,45 @@ class _LoginDailyFocusState extends State<LoginDailyFocus> {
   Future<void> handleSubmit() async {
     validateForm();
 
-    if (emailError.isEmpty && passwordError.isEmpty) {
+    if (userError.isEmpty && passwordError.isEmpty) {
       setState(() => isLoading = true);
 
       try {
-        // Intentar iniciar sesión con las credenciales proporcionadas
-        final user = await _databaseHelper.loginUser(
-          emailController.text.trim(),
-          passwordController.text.trim(),
-        );
-
-        if (user != null) {
-          // Éxito: credenciales correctas
+        // Verificar credenciales por defecto
+        if (userController.text.trim() == "user@gmail.com" &&
+            passwordController.text.trim() == "pass123") {
           setState(() {
             loginSuccess = true;
             loginError = '';
           });
+          // Navegar al menú principal
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+          return;
+        }
+
+        // Si no son las credenciales por defecto, intentar con la base de datos
+        final user = await _databaseHelper.loginUser(
+          userController.text.trim(),
+          passwordController.text.trim(),
+        );
+
+        if (user != null) {
+          setState(() {
+            loginSuccess = true;
+            loginError = '';
+          });
+          // Navegar al menú principal
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
         } else {
           // Error: credenciales incorrectas
           setState(() {
-            loginError = 'Correo o contraseña incorrectos';
+            loginError = 'Usuario o contraseña incorrectos';
           });
         }
       } catch (e) {
@@ -79,6 +93,14 @@ class _LoginDailyFocusState extends State<LoginDailyFocus> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.indigo[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.indigo),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -89,29 +111,28 @@ class _LoginDailyFocusState extends State<LoginDailyFocus> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.memory, color: Colors.indigo, size: 40),
-                  SizedBox(height: 10),
-                  Text(
+                  const Icon(Icons.memory, color: Colors.indigo, size: 40),
+                  const SizedBox(height: 10),
+                  const Text(
                     "Daily Focus",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextField(
-                    controller: emailController,
+                    controller: userController,
                     decoration: InputDecoration(
-                      labelText: "Correo electrónico",
-                      errorText: emailError.isNotEmpty ? emailError : null,
+                      labelText: "Usuario",
+                      errorText: userError.isNotEmpty ? userError : null,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: passwordController,
                     obscureText: !showPassword,
                     decoration: InputDecoration(
                       labelText: "Contraseña",
-                      errorText: passwordError.isNotEmpty
-                          ? passwordError
-                          : null,
+                      errorText:
+                          passwordError.isNotEmpty ? passwordError : null,
                       suffixIcon: IconButton(
                         icon: Icon(
                           showPassword
@@ -123,7 +144,7 @@ class _LoginDailyFocusState extends State<LoginDailyFocus> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: isLoading ? null : handleSubmit,
                     child: Text(isLoading ? "Iniciando sesión..." : "Ingresar"),
@@ -133,12 +154,12 @@ class _LoginDailyFocusState extends State<LoginDailyFocus> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         loginError,
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   if (loginSuccess)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         "¡Inicio de sesión exitoso!",
                         style: TextStyle(color: Colors.green),

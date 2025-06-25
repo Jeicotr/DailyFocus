@@ -77,11 +77,11 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
       );
 
       final id = await _databaseProvider.insertActivity(newActivity);
-      
+
       if (id > 0) {
         // Éxito: se insertó la actividad
         final insertedActivity = newActivity.copyWith(id: id);
-        
+
         setState(() {
           tasks.add(insertedActivity);
           taskNameController.clear();
@@ -120,6 +120,15 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
 
     return Scaffold(
       backgroundColor: Colors.indigo[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text("Menu", style: TextStyle(color: Colors.indigo[800])),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.indigo[800]),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -144,11 +153,8 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                           decoration: BoxDecoration(
                             color: Colors.indigo[600],
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                              ),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black26, blurRadius: 6),
                             ],
                           ),
                           child: const Icon(
@@ -304,7 +310,9 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                   isExpanded: true,
                                   value: taskStatus.isEmpty ? null : taskStatus,
                                   hint: const Text("Selecciona un estado"),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   onChanged: (String? newValue) {
                                     if (newValue != null) {
                                       setState(() {
@@ -312,8 +320,13 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                       });
                                     }
                                   },
-                                  items: <String>['To Do', 'In Progress', 'Done']
-                                      .map<DropdownMenuItem<String>>((String value) {
+                                  items: <String>[
+                                    'To Do',
+                                    'In Progress',
+                                    'Done',
+                                  ].map<DropdownMenuItem<String>>((
+                                    String value,
+                                  ) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(value),
@@ -345,13 +358,15 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.indigo[600],
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
-                                icon: isLoading 
-                                    ? SizedBox(
+                                icon: isLoading
+                                    ? const SizedBox(
                                         width: 18,
                                         height: 18,
                                         child: CircularProgressIndicator(
@@ -362,7 +377,7 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                     : const Icon(Icons.add, size: 18),
                                 label: Text(
                                   isLoading ? "Guardando..." : "Agregar tarea",
-                                  style: TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 16),
                                 ),
                               ),
                             ),
@@ -374,9 +389,7 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
 
                     // Lista de tareas registradas
                     if (isLoading && tasks.isEmpty)
-                      const Center(
-                        child: CircularProgressIndicator(),
-                      )
+                      const Center(child: CircularProgressIndicator())
                     else if (tasks.isNotEmpty)
                       Card(
                         elevation: 8,
@@ -404,15 +417,20 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                     margin: const EdgeInsets.only(bottom: 16),
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey[300]!),
+                                      border: Border.all(
+                                        color: Colors.grey[300]!,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               child: Text(
@@ -424,17 +442,20 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                               ),
                                             ),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: 8,
                                                 vertical: 4,
                                               ),
                                               decoration: BoxDecoration(
                                                 color: task.status == 'Done'
                                                     ? Colors.green[100]
-                                                    : task.status == 'In Progress'
+                                                    : task.status ==
+                                                            'In Progress'
                                                         ? Colors.blue[100]
                                                         : Colors.grey[100],
-                                                borderRadius: BorderRadius.circular(16),
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
                                               ),
                                               child: Text(
                                                 task.status,
@@ -442,7 +463,8 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                                   fontSize: 12,
                                                   color: task.status == 'Done'
                                                       ? Colors.green[800]
-                                                      : task.status == 'In Progress'
+                                                      : task.status ==
+                                                              'In Progress'
                                                           ? Colors.blue[800]
                                                           : Colors.grey[800],
                                                 ),
@@ -452,7 +474,8 @@ class _ActivityRegistrationState extends State<ActivityRegistration> {
                                         ),
                                         const SizedBox(height: 8),
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               task.date,

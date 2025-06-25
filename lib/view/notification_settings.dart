@@ -18,7 +18,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
     setState(() {
       saved = true;
     });
-    
+
     // Resetear el estado después de 3 segundos
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
@@ -33,6 +33,15 @@ class _NotificationSettingsState extends State<NotificationSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.indigo[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text("Menu", style: TextStyle(color: Colors.indigo[800])),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.indigo[800]),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -57,11 +66,8 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                           decoration: BoxDecoration(
                             color: Colors.indigo[600],
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                              ),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black26, blurRadius: 6),
                             ],
                           ),
                           child: const Icon(
@@ -89,7 +95,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Card principal
                     Card(
                       elevation: 8,
@@ -128,7 +134,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                               ),
                             ),
                             const SizedBox(height: 24),
-                            
+
                             // Formulario
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,9 +142,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                 // Tipo de notificación
                                 const Text(
                                   "Tipo de recordatorio",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                  style: TextStyle(fontWeight: FontWeight.w500),
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
@@ -160,7 +164,9 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                                   : Colors.grey[300]!,
                                               width: 2,
                                             ),
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             color: Colors.white,
                                           ),
                                           child: Column(
@@ -168,9 +174,10 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                               Icon(
                                                 Icons.access_time,
                                                 size: 24,
-                                                color: notificationType == 'fixed'
-                                                    ? Colors.indigo
-                                                    : Colors.grey[600],
+                                                color:
+                                                    notificationType == 'fixed'
+                                                        ? Colors.indigo
+                                                        : Colors.grey[600],
                                               ),
                                               const SizedBox(height: 8),
                                               const Text("Horario fijo"),
@@ -192,12 +199,15 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                           padding: const EdgeInsets.all(16),
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                              color: notificationType == 'relative'
-                                                  ? Colors.indigo
-                                                  : Colors.grey[300]!,
+                                              color:
+                                                  notificationType == 'relative'
+                                                      ? Colors.indigo
+                                                      : Colors.grey[300]!,
                                               width: 2,
                                             ),
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             color: Colors.white,
                                           ),
                                           child: Column(
@@ -205,7 +215,8 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                               Icon(
                                                 Icons.notifications,
                                                 size: 24,
-                                                color: notificationType == 'relative'
+                                                color: notificationType ==
+                                                        'relative'
                                                     ? Colors.indigo
                                                     : Colors.grey[600],
                                               ),
@@ -219,7 +230,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                   ],
                                 ),
                                 const SizedBox(height: 24),
-                                
+
                                 // Configuración según tipo seleccionado
                                 if (notificationType == 'fixed') ...[
                                   const Text(
@@ -231,14 +242,18 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                   const SizedBox(height: 8),
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey[300]!),
+                                      border: Border.all(
+                                        color: Colors.grey[300]!,
+                                      ),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<String>(
                                         isExpanded: true,
                                         value: frequency,
-                                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                        ),
                                         onChanged: (String? newValue) {
                                           if (newValue != null) {
                                             setState(() {
@@ -246,8 +261,14 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                             });
                                           }
                                         },
-                                        items: <String>['daily', 'weekly', 'weekdays', 'custom']
-                                            .map<DropdownMenuItem<String>>((String value) {
+                                        items: <String>[
+                                          'daily',
+                                          'weekly',
+                                          'weekdays',
+                                          'custom',
+                                        ].map<DropdownMenuItem<String>>((
+                                          String value,
+                                        ) {
                                           String displayText = '';
                                           switch (value) {
                                             case 'daily':
@@ -281,19 +302,24 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                   const SizedBox(height: 8),
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey[300]!),
+                                      border: Border.all(
+                                        color: Colors.grey[300]!,
+                                      ),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<String>(
                                         isExpanded: true,
                                         value: '09:00',
-                                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                        ),
                                         onChanged: (String? newValue) {
                                           // Implementar cambio de hora
                                         },
                                         items: List.generate(24, (index) {
-                                          final hour = index < 10 ? '0$index' : '$index';
+                                          final hour =
+                                              index < 10 ? '0$index' : '$index';
                                           return DropdownMenuItem<String>(
                                             value: '$hour:00',
                                             child: Text('$hour:00'),
@@ -337,7 +363,8 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                     },
                                   ),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "5 min",
@@ -357,7 +384,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                   ),
                                 ],
                                 const SizedBox(height: 24),
-                                
+
                                 // Mensaje de guardado
                                 if (saved)
                                   Row(
@@ -378,7 +405,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                     ],
                                   ),
                                 const SizedBox(height: 16),
-                                
+
                                 // Botón de guardar
                                 SizedBox(
                                   width: double.infinity,
@@ -387,7 +414,9 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.indigo[600],
                                       foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
@@ -404,15 +433,12 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                         ),
                       ),
                     ),
-                    
+
                     // Información adicional
                     const SizedBox(height: 16),
                     Text(
                       "Las notificaciones se enviarán según estas preferencias",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
                   ],

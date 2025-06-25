@@ -8,7 +8,8 @@ class TaskFeedback extends StatefulWidget {
   _TaskFeedbackState createState() => _TaskFeedbackState();
 }
 
-class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderStateMixin {
+class _TaskFeedbackState extends State<TaskFeedback>
+    with SingleTickerProviderStateMixin {
   int completedTasks = 0;
   bool showFeedback = false;
   String currentFeedback = '';
@@ -17,21 +18,13 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
   late Animation<Offset> _slideAnimation;
 
   final List<Map<String, dynamic>> messages = [
-    {
-      'text': '¡Excelente trabajo!',
-      'icon': Icons.star,
-      'color': Colors.amber,
-    },
+    {'text': '¡Excelente trabajo!', 'icon': Icons.star, 'color': Colors.amber},
     {
       'text': '¡Lo hiciste genial!',
       'icon': Icons.emoji_events,
       'color': Colors.orange,
     },
-    {
-      'text': '¡Sigue así!',
-      'icon': Icons.bolt,
-      'color': Colors.blue,
-    },
+    {'text': '¡Sigue así!', 'icon': Icons.bolt, 'color': Colors.blue},
     {
       'text': '¡Tarea completada con éxito!',
       'icon': Icons.check_circle,
@@ -47,19 +40,11 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
       vsync: this,
     );
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeIn,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
   }
 
@@ -94,6 +79,15 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.indigo[50],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text("Menu", style: TextStyle(color: Colors.indigo[800])),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.indigo[800]),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -118,11 +112,8 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                           decoration: BoxDecoration(
                             color: Colors.indigo[600],
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 6,
-                              ),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black26, blurRadius: 6),
                             ],
                           ),
                           child: const Icon(
@@ -234,7 +225,7 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                               ),
                             ),
                             const SizedBox(height: 16),
-                            
+
                             // Logro 1
                             Container(
                               padding: const EdgeInsets.all(12),
@@ -265,7 +256,8 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Primer tarea completada",
@@ -292,7 +284,7 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                               ),
                             ),
                             const SizedBox(height: 12),
-                            
+
                             // Logro 2
                             Container(
                               padding: const EdgeInsets.all(12),
@@ -323,7 +315,8 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Estrella emergente",
@@ -350,7 +343,7 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                               ),
                             ),
                             const SizedBox(height: 12),
-                            
+
                             // Logro 3
                             Container(
                               padding: const EdgeInsets.all(12),
@@ -381,7 +374,8 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Maestro de productividad",
@@ -438,10 +432,7 @@ class _TaskFeedbackState extends State<TaskFeedback> with SingleTickerProviderSt
                         spreadRadius: 1,
                       ),
                     ],
-                    border: Border.all(
-                      color: Colors.indigo[100]!,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.indigo[100]!, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
